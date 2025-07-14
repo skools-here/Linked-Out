@@ -31,7 +31,7 @@ export default function Home() {
 
         {mounted && (
           <div className="pt-6 pb-8 text-center text-[1.75rem] md:text-3xl font-extrabold tracking-tight leading-snug text-[#EFEEEE] italic">
-            Stop this "🚀🚀🚀" and just say what you mean.
+            Stop this 🚀🚀🚀 and just say what you mean.
           </div>
         )}
       </div>
