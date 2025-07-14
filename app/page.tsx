@@ -1,103 +1,86 @@
-import Image from "next/image";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useState, useEffect } from "react";
+import { handleCopy } from "./utils/handleCopy";
+import { callGemini } from "./utils/callGemini";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [input, setInput] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    
+    <div className="relative min-h-screen flex flex-col items-center justify-start px-4 py-10 overflow-x-hidden bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364]">
+      {/* Decorative blurred glows */}
+      <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-pink-500 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+      <div className="absolute top-10 right-0 w-[300px] h-[300px] bg-blue-500 rounded-full opacity-20 blur-2xl animate-pulse"></div>
+      
+      <div className="flex flex-col justify-center items-center space-y-2 z-10">
+        <div className="pt-3 text-4xl md:text-5xl font-extrabold tracking-tight leading-tight bg-gradient-to-r from-[#EEEFEE] to-[#EEFFEE] text-transparent bg-clip-text drop-shadow-sm">
+          Humanize Linkedin Post
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {mounted && (
+          <div className="pt-6 pb-8 text-center text-[1.75rem] md:text-3xl font-extrabold tracking-tight leading-snug text-[#EFEEEE] italic">
+            Stop this "🚀🚀🚀" and just say what you mean.
+          </div>
+        )}
+      </div>
+
+      <div className="pt-8 w-full max-w-3xl z-10">
+        <div className="pb-8 flex flex-col justify-center items-center">
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            minLength={30}
+            placeholder={"Paste That Goofy Post Here"}
+            className="w-full h-60 resize-none text-slate-900"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        <div className="flex flex-col justify-center items-center">
+          <Button onClick={() => callGemini(input, setResponse, setLoading)}>Clean It Up</Button>
+        </div>
+
+        {loading ? (
+          <div className="mt-8 flex items-center justify-center text-white text-lg animate-pulse">
+            <svg
+              className="animate-spin h-6 w-6 mr-2 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            Generating prompt...
+          </div>
+        ) : (
+          response && (
+            <div className="relative flex justify-center items-center mt-8 w-full z-10">
+              <button
+                onClick={() => handleCopy(response, setCopied)}
+                className="absolute top-2 right-2 px-7 py-3 text-sm bg-white/10 text-white border border-white/20 rounded-md hover:bg-white/20 transition-all backdrop-blur-md"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+
+              <div className="bg-gradient-to-br from-neutral-800 via-neutral-900 to-black border border-white/10 shadow-xl text-white p-6 rounded-3xl text-base leading-relaxed tracking-wide transition-all duration-300 whitespace-pre-wrap w-full max-w-3xl">
+                {response}
+              </div>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }
